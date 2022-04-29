@@ -105,12 +105,17 @@ class UTracker(type):
         except:
             pass
     
-    def check_unique(cls, key : str, value, ignore_this = None, **kwargs):
+    def check_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, **kwargs):
         stats = cls.get_stats()
         if not stats.is_unique_key(key):
             return None
 
+        if value is None and ignore_none:
+            return True
+
         for attr, kkey, kval in cls.yield_field(key,yield_all=True, **kwargs):
+            if attr is None and ignore_none:
+                continue
             if ignore_this == kkey:
                 continue
             if attr == value:
@@ -118,14 +123,19 @@ class UTracker(type):
 
         return True
 
-    def check_iterable_unique(cls, key : str, value, ignore_this = None, **kwargs):
+    def check_iterable_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, **kwargs):
         stats = cls.get_stats()
 
         if not stats.is_iterable_unique_key(key):
             return None
 
+        if value is None and ignore_none:
+            return True
+
         unique = set()
         for attr, kkey, kval in cls.yield_field(key,yield_all=True, **kwargs):
+            if attr is None and ignore_none:
+                continue
             if ignore_this == kkey:
                 continue
             unique.update(attr)
