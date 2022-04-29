@@ -8,7 +8,12 @@ setup(
     long_description=''.join(open('README.md').readlines()),
     long_description_content_type="text/markdown",
     url="https://github.com/ZackaryW/zw_util_lib",
-    packages=find_packages(),
+    packages=[
+        "zxutil",
+        "zxutil.umodel",
+        "zxutil.FUNCS",
+        "zxdeprecated"
+    ],
     # get from requirements.txt
     install_requires= open('requirements.txt').readlines(),
     classifiers=[
