@@ -116,6 +116,9 @@ class UTrackerStats:
             yield func
 
     def set_cast(self, field_name : str, val) -> typing.Any:
+        if val == None:
+            return None
+
         if field_name not in self.atomic_types:
             return val
 
