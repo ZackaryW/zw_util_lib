@@ -125,7 +125,7 @@ class UItem(metaclass=UTracker):
         data = self.todict()
         primary_key_label = self._tracker.get_stats().primary_key
         data.pop(primary_key_label)
-        return {self.primary_key: data}
+        return {str(self.primary_key): data}
 
     # ANCHOR PROPERTY
     @property

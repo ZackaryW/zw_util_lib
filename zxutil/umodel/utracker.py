@@ -20,7 +20,11 @@ class UTracker(type):
         primary_key = stats.primary_key
         # get primary key value
         primary_key_value = kwargs.get(primary_key, None)
-        primary_key_value = str(primary_key_value)
+        try:
+            primary_key_value = str(primary_key_value)
+        except:
+            raise U_ValidationError(f"primary key value must be castable to str")
+
         if primary_key_value is None:
             raise ValueError("primary key value is None")
         # check if primary key value is unique

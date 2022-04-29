@@ -84,11 +84,6 @@ class UTrackerStats:
             if is_uniquekey:
                 unique_keys[field.name] = None
 
-        # force primary key to str
-        atomic_types[primary_key] = str
-            
-
-
         stats = UTrackerStats(
             all_fields=all_fields,
             primary_key=primary_key,

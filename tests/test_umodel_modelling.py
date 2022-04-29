@@ -5,7 +5,7 @@ import unittest
 from zxutil.umodel import UItem
 from zxutil.umodel.attrs import UError, UKey, UPrimaryKey, UniqueKey
 
-UID_MUST_BE_AT_LEAST_7 = lambda x : len(x) == 7
+UID_MUST_BE_AT_LEAST_7 = lambda x : len(str(x)) == 7
 VALID_EMAIL = lambda x : "@" in x and not x.startswith("@") and not x.endswith("@")
 
 class modelling(unittest.TestCase):
@@ -36,7 +36,7 @@ class test(unittest.TestCase):
             age=12,
         )
         # test if primary key has been casted to str
-        self.assertEqual(x.uid, "1234555")
+        self.assertEqual(x.uid, 1234555)
 
         # test if primary key can't be changed
         with self.assertRaises(UError):
@@ -44,36 +44,36 @@ class test(unittest.TestCase):
         # test cannot create an item with same primary key
         with self.assertRaises(UError):
             testx(
-                uid="1234555",
+                uid=1234555,
                 name="pass",
                 age=12,
             )
         # test cannot create an item with same unique key name
         with self.assertRaises(UError):
             testx(
-                uid="1234566",
+                uid=1234566,
                 name="hello",
                 age=12,
             )
         # test
         testx(
-            uid="1234566",
+            uid=1234566,
             name="pass",
             age=12,
         )
-        data =test.export_all()
+        data =testx.export_all()
         pprint(data)
         self.assertEqual(len(data), 2)
         
         # test remove
-        testx.remove(uid="1234566")
-        data =test.export_all()
+        testx.remove(uid=1234566)
+        data =testx.export_all()
         pprint(data)
         self.assertEqual(len(data), 1)
 
     def test_2(self):
         x = testx(
-            uid=1234555,
+            uid="1234555",
             name="hello",
             age=12,
         )
@@ -88,6 +88,6 @@ class test(unittest.TestCase):
             age=12,
         )
 
-        pulled = testx.get(uid="1234566")
+        pulled = testx.get(uid=1234566)
         self.assertIsNotNone(pulled)
         self.assertEqual(pulled.name, "pass")
