@@ -102,10 +102,9 @@ class UTracker(type):
             return
 
         # get primary key
-        try:
-            del cls._instances[cls][item.primary_key]
-        except:
-            pass
+        # get primary key
+        cls._instances[cls].pop(str(item.primary_key), None)
+        del item
     
     def check_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, **kwargs):
         stats = cls.get_stats()

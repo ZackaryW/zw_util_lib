@@ -68,7 +68,8 @@ class UItem(metaclass=UTracker):
         if isinstance(data, dict):
             data.update(self.tojson())
             with open(path, "w") as f:
-                json.dump(data, f)
+                json.dump(data, f, indent=4)
+            return
 
         if not isinstance(data, list):
             raise ValueError("data is not dict/list")
@@ -76,7 +77,7 @@ class UItem(metaclass=UTracker):
         exist = False
 
         for i, item in enumerate(data):
-            if item[primary_key_label] == self.primary_key:
+            if item[primary_key_label] == str(self.primary_key):
                 data[i] = self.todict()
                 exist = True
                 break
@@ -158,7 +159,7 @@ class UItem(metaclass=UTracker):
             return data
 
         with open(path, "w") as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=4)
   
     @classmethod
     def create(cls, _filter: bool = False, **kwargs):
