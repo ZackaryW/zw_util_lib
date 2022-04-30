@@ -6,6 +6,7 @@ import PIL
 from PIL import Image
 from PIL.Image import Image as PILImage
 import requests
+import io
 # ANCHOR load methods
 def load_file(path : str, **kwargs) -> str:
     with open(path, "r") as file:
@@ -27,7 +28,9 @@ def fetch_web_img(link : str, **kwargs) -> PILImage:
     if link is None:
         return
     res = requests.get(link)
-    return res.content
+    if res is None or res.content is None:
+        return
+    return Image.open(io.BytesIO(res.content))
 
 def save_web_img(obj, path : str, **kwargs):
     if isinstance(obj, PILImage):
@@ -154,6 +157,7 @@ class FolderCacher:
             self._holding_queue[key] = obj
 
     def save(self, key : str,obj=None, **kwargs):
+        key = str(key)
         if key in self._counting_index:
             logging.info(f"{key} already exist in cache")
 
@@ -184,6 +188,7 @@ class FolderCacher:
 
 
     def load(self, key : str, **kwargs):
+        key = str(key)
         if (cache:=self._get_from_cache(key)) is not None:
             self._place_cache(key, cache)
             return cache
@@ -210,6 +215,16 @@ class FolderCacher:
         self._place_cache(key, obj)
         return obj
 
+    def get_path(self, key : str):
+        path=  os.path.join(self.PATH, key)
+        if self.GLOBAL_EXTENSION is not None:
+            path += f".{self.GLOBAL_EXTENSION}"
+        return path
+
+    def remove_folder(self):
+        if os.path.exists(self.PATH):
+            os.rmdir(self.PATH)
+    
     @staticmethod
     def make_pilimage_cache(path : str, create_if_null : bool = True, extension : str =None) -> 'FolderCacher':
         cache = FolderCacher(path, create_if_null, extension)
