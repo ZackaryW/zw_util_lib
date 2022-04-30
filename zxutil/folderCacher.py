@@ -4,6 +4,31 @@ import shutil
 from PIL import Image
 import json
 
+
+# ANCHOR load methods
+def load_json(file_path : str, **kwargs) -> str:
+    with open(file_path, "r") as file:
+        return json.load(file)
+
+def load_file(file_path : str, **kwargs) -> str:
+    with open(file_path, "r") as file:
+        return file.readlines()
+
+def load_image(file_path : str, **kwargs) -> str:
+    return Image.open(file_path)
+
+def save_file(raw, file_path : str, **kwargs):
+    with open(file_path, "w") as file:
+        file.write(raw)
+
+def save_image(raw, file_path : str, **kwargs):
+    raw : Image
+    raw.save(file_path)
+
+def save_json(raw, file_path : str, **kwargs):
+    with open(file_path, "w") as file:
+        json.dump(raw, file)
+
 class FolderCacher:
     """
     a very primitive way to cache files
@@ -21,29 +46,27 @@ class FolderCacher:
         self.maximum_cache_size = 30
         self.holding_queue = {}
         self.holding_queue_size = 5
-        self.file_load_method = self.load_file
-        self.file_save_method = self.save_file
+        self.file_load_method = load_file
+        self.file_save_method = save_file
 
-        self.files_index = {}
         self.count_index = {}
         self.path = path
         # walk path
         files = os.listdir(path)
         for file in files:
-            no_extension_name = os.path.splitext(file)[0]
-            self.files_index[no_extension_name] = os.path.join(path, file)
-            self.count_index[no_extension_name] = 0
+            self.count_index[file] = 0, os.path.join(path, file)
 
 
     def __contains__(self, file_name : str) -> bool:
-        return file_name in self.files_index
+        return file_name in self.count_index
     
     def _trigger_count(self, file_name : str, save :bool = False) -> None:
         if save and file_name not in self.count_index:
-            self.count_index[file_name] = 0
+            self.count_index[file_name] = list([0, None])
+
         elif file_name not in self.count_index:
             return
-        self.count_index[file_name] += 1
+        self.count_index[file_name][0] += 1
     
     def _get_holding_queue(self, file_name : str) -> str:
         if file_name not in self.holding_queue:
@@ -62,7 +85,7 @@ class FolderCacher:
         self.holding_queue[file_name] = item
     
     def _handle_frequent_files(self, loaded, file_name :str):
-        if self.count_index[file_name] < self.minimum_needed_to_cache:
+        if self.count_index[file_name][0] < self.minimum_needed_to_cache:
             return
         
         if len(self.most_frequent_files) < self.maximum_cache_size:
@@ -71,11 +94,11 @@ class FolderCacher:
 
 
         current_min_key = file_name
-        current_min_count = self.count_index[file_name]
+        current_min_count = self.count_index[file_name][0]
         for k, v in self.most_frequent_files:
-            if self.count_index[k] < current_min_count:
+            if self.count_index[k][0] < current_min_count:
                 current_min_key = k
-                current_min_count = self.count_index[k]    
+                current_min_count = self.count_index[k][0]
             
         if current_min_key == file_name:
             return
@@ -84,7 +107,7 @@ class FolderCacher:
         del self.most_frequent_files[current_min_key]
 
 
-    def load(self, file_name : str):
+    def load(self, file_name : str, **kwargs):
         file_name = str(file_name)
         self._trigger_count(file_name)
         if (holding:= self._get_holding_queue(file_name)) is not None:
@@ -92,60 +115,37 @@ class FolderCacher:
         if (item := self._get_frequenct(file_name)) is not None:
             return item  
 
-        file_path = self.files_index[file_name]
-        loaded = self.file_load_method(file_path)
+        file_path = self.count_index[file_name][1]
+        loaded = self.file_load_method(file_path, **kwargs)
         self._place_holding_queue(loaded, file_name)
         self._handle_frequent_files(loaded, file_name)
 
         return loaded
         
 
-    def save(self, raw, file_name : str, extension : str=None, overwrite : bool = False):
+    def save(self, raw, file_name : str, extension : str=None, overwrite : bool = False,**kwargs):
         file_name = str(file_name)
         self._trigger_count(file_name, save=True)
         complete_save_path = os.path.join(self.path, file_name)
         if extension is not None:
             complete_save_path = complete_save_path + "." + extension
-        self._place_holding_queue(raw, file_name)
+        self._place_holding_queue(raw, file_name, **kwargs)
         if os.path.exists(complete_save_path) and not overwrite:
             return
-    
+        self.count_index[file_name][1] = complete_save_path
         self.file_save_method(raw, complete_save_path)
 
     def remove_path(self):
         shutil.rmtree(self.path)
 
 
-    # ANCHOR load methods
-    def load_json(self, file_path : str) -> str:
-        with open(file_path, "r") as file:
-            return json.load(file)
-
-    def load_file(self, file_path : str) -> str:
-        with open(file_path, "r") as file:
-            return file.readlines()
-
-    def load_image(file_path : str) -> str:
-        return Image.open(file_path)
     
-    def save_file(self, raw, file_path : str):
-        with open(file_path, "w") as file:
-            file.write(raw)
-
-    def save_image(self, raw, file_path : str):
-        raw : Image
-        raw.save(file_path)
-
-    def save_json(self, raw, file_path : str):
-        with open(file_path, "w") as file:
-            json.dump(raw, file)
-
     # ANCHOR class
 
     @classmethod
     def image_cacher(cls, path : str, create :bool = False) -> 'FolderCacher':
         cacher = FolderCacher(path, create)
-        cacher.file_load_method = cacher.load_image
-        cacher.file_save_method = cacher.save_image
+        cacher.file_load_method = load_image
+        cacher.file_save_method = save_image
         return cacher
 

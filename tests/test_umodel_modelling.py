@@ -27,6 +27,8 @@ class testx(UItem):
     uid : typing.Union[int, UPrimaryKey, UID_MUST_BE_AT_LEAST_7]
     name : typing.Union[str, UniqueKey]
     age : typing.Union[int, UKey]
+    something_random : typing.Union[str, UniqueKey] = None
+    somemore_random : typing.Union[str, UniqueKey] = None
 
 class test(unittest.TestCase):
     def test_1(self):
@@ -86,6 +88,12 @@ class test(unittest.TestCase):
             uid=1234577,
             name="someone",
             age=12,
+        )
+
+        zz = testx(
+            uid=1234578,
+            name="some1",
+            age=21,
         )
 
         pulled = testx.get(uid=1234566)
