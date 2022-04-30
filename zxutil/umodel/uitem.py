@@ -172,4 +172,4 @@ class UItem(metaclass=UTracker):
         if isinstance(json_data, dict):
             for key, val in json_data.items():
                 val[cls.get_stats().primary_key] = key
-                return cls.create(**val)
+                cls.create(**val)
