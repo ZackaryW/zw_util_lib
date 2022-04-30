@@ -114,7 +114,7 @@ class UItem(metaclass=UTracker):
             return val
     
     @classmethod
-    def export_all(cls, path= None, update: bool = False):
+    def export_all(cls, path= None, update: bool = False, replace: bool = False):
         data = {}
         data2 = None
         if update and path is not None:
@@ -130,8 +130,12 @@ class UItem(metaclass=UTracker):
         if path is None:
             return data
 
+
         with open(path, "w") as f:
-            json.dump(data, f)
+            if replace:
+                f.write(json.dumps(data, indent=4))
+                return
+            json.dump(data, f, indent=4)
 
     @classmethod
     def export(cls, path : str=None,update_: bool = False, **kwargs):
