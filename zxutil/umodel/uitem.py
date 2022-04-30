@@ -187,9 +187,10 @@ class UItem(metaclass=UTracker):
             json.dump(data, f)
   
     @classmethod
-    def create(cls, **kwargs):
+    def create(cls, _filter: bool = False, **kwargs):
         # inspect
-        kwargs = {k:v for k,v in kwargs.items() if k in inspect.signature(cls).parameters}
+        if _filter:
+            kwargs = {k:v for k,v in kwargs.items() if k in cls.get_stats().all_fields}
         return cls(**kwargs)
 
     @classmethod
