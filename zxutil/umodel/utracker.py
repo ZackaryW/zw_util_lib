@@ -8,8 +8,8 @@ import inspect
 import logging
 
 class UTracker(type):
-    __analyzed : dict= {}
-    __instances : dict = {}
+    _analyzed : dict= {}
+    _instances : dict = {}
 
     def __call__(cls, *args, **kwargs):
         """
@@ -30,17 +30,17 @@ class UTracker(type):
         if primary_key_value is None:
             raise ValueError("primary key value is None")
         # check if primary key value is unique
-        if primary_key_value in cls.__instances[cls]:
+        if primary_key_value in cls._instances[cls]:
             raise U_ValidationError("cannot instantiate with duplicate primary key value")
         instance = super().__call__(*args, **kwargs)
-        cls.__instances[cls][primary_key_value] = instance
+        cls._instances[cls][primary_key_value] = instance
         return instance
 
     def yield_instance(cls, **kwargs):
-        if cls not in cls.__instances:
+        if cls not in cls._instances:
             return
 
-        instances : dict = cls.__instances[cls]
+        instances : dict = cls._instances[cls]
         
         if len(kwargs) == 0:
             for key, val in instances.items():
@@ -74,36 +74,36 @@ class UTracker(type):
             yield key
 
     def get_stats(cls) -> UTrackerStats:
-        if cls not in cls.__instances:
-            cls.__instances[cls] = {}
+        if cls not in cls._instances:
+            cls._instances[cls] = {}
 
-        if cls not in cls.__analyzed:
-            cls.__analyzed[cls] = UTrackerStats.analyze_uitem(cls)
+        if cls not in cls._analyzed:
+            cls._analyzed[cls] = UTrackerStats.analyze_uitem(cls)
 
-        return cls.__analyzed[cls]
+        return cls._analyzed[cls]
 
     def remove(cls, **kwargs):
-        if cls not in cls.__instances:
+        if cls not in cls._instances:
             return
-        instances  = cls.__instances[cls].keys()
+        instances  = cls._instances[cls].keys()
 
         frozekeys = frozenset(instances)
         for key in frozekeys:
             condlex = CondLex(**kwargs)
-            datadict = dataclasses.asdict(cls.__instances[cls][key])
+            datadict = dataclasses.asdict(cls._instances[cls][key])
             if condlex.match(**datadict):
-                del cls.__instances[cls][key]
+                del cls._instances[cls][key]
     
     def remove_this(cls, item):
-        if cls not in cls.__instances:
+        if cls not in cls._instances:
             return
     
-        if item.__class__ not in cls.__instances:
+        if item.__class__ not in cls._instances:
             return
 
         # get primary key
         try:
-            del cls.__instances[cls][item.primary_key]
+            del cls._instances[cls][item.primary_key]
         except:
             pass
     
