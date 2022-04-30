@@ -47,37 +47,7 @@ class UItem(metaclass=UTracker):
         ):
             raise U_ValidationError(f"{name} is not unique (iterable) ({val})")
 
-        func_kwargs ={
-            "name": name,
-            "val": val,
-            "primary_key": self.primary_key,
-            "tracker": self._tracker,
-            "item" : self,
-            "stats" : stats,
-        }
-
-        for func in stats.yield_callables(name):
-            # check func parameters needed
-            func_parameters = inspect.signature(func).parameters
-            try:
-                if len(func_parameters) == 1:
-                    res = func(val)
-                else:
-                    func_kwargs = {k:v for k,v in func_kwargs.items() if k in func_parameters}
-                    res = func(**func_kwargs)
-            except Exception as e:
-                logging.error(f"{func.__name__} failed with {e}")
-                raise U_ValidationError(f"{name} is not valid ({val})")
-
-            if isinstance(res, bool) and res == False:
-                raise U_ValidationError(f"{name} is not valid ({val}) [failed func {func.__name__}]")
-            elif isinstance(res, bool):
-                continue
-            else:
-                val = res
-
-            if val is None:
-                raise U_ValidationError(f"{name} is None caused by func {func.__name__}")
+        val = self._tracker.check_callables(name, val, self.primary_key,self)
 
         object.__setattr__(self, name, val)
 
