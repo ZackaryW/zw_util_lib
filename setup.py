@@ -2,7 +2,7 @@ from setuptools import setup,find_packages
 
 setup(
     name="zw-util-lib",
-    version="3.0.14",
+    version="3.0.17",
     author="ZW",
     description="a library for misc utilities",
     long_description=''.join(open('README.md').readlines()),

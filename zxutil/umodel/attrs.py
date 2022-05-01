@@ -10,6 +10,10 @@ ALL_UKEYS = [
 ]
 
 
-class UError(Exception):pass
+class UError(Exception):
+    """
+    base Error type for UModel
+    """
+
 class U_ValidationError(UError):pass
 class U_InvalidBehavior(UError):pass

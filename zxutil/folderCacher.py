@@ -1,5 +1,6 @@
 import logging
 import os
+from types import MappingProxyType
 import typing
 import json
 import PIL
@@ -45,6 +46,21 @@ def load_web_img(path : str, **kwargs) -> PILImage:
     return Image.open(path)
 
 class FolderCacher:
+    """
+    a simple io based deduper
+
+    it is only intended to replace redis when its a single extension, single folder with not over 2000 entries. 
+
+    It does not watch over folder changes constantly
+
+    `load()` function will first check if file already loaded, and returns the in memory instance
+
+    `save()` function first check if the file already exists, if not it will attempt to fetch using `fetch_method`
+
+    when a file is loaded, the file will be placed in `holding_queue`, `holding_queue` will keep at a constant size (`MAX_HOLDING_QUEUE_SIZE`) and follows a queue structure
+
+    if a file load count has exceeded `MIN_REQ_TO_PLACE_CONSTANT`, it will be placed into `constant_cache` (limited by `MAX_CONSTANT_CACHE_SIZE`)
+    """
     class _CACHE_FLAG_: pass
     class CONSTANT_CACHE(_CACHE_FLAG_): pass
     class HOLDING_CACHE(_CACHE_FLAG_): pass
@@ -240,3 +256,11 @@ class FolderCacher:
         cache.method_fetch = fetch_web_img
 
         return cache
+
+    @property
+    def counting_index(self):
+        return MappingProxyType(self._counting_index)
+
+    @property
+    def constant_cache(self):
+        return MappingProxyType(self._constant_cache)

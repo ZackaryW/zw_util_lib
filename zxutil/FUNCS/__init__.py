@@ -8,6 +8,11 @@ def parse_json(data : typing.Union[dict, list, str]) -> dict:
     """
     parse input data to dict
     checks if data is valid json path or json data
+    if input is string, it will 1st check if it is a valid json path
+    if it is not, it will try to parse it as json data
+    Returns:
+        None: if data is not jsonable
+        dict/list : if data is jsonable or is dict or list
     """
     if isinstance(data, (dict, list)):
         return data
@@ -32,7 +37,7 @@ def create_timestamp() -> int:
     unix_timestamp = int(now.timestamp() * 1000)
     return unix_timestamp
 
-def is_jsonable(x):
+def is_jsonable(x) -> bool:
     """
     checks if a value is jsonable
     """

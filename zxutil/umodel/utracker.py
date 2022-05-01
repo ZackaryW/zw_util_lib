@@ -178,6 +178,8 @@ class UTracker(type):
                 raise U_ValidationError(f"{name} is not valid ({val}) [failed func {func.__name__}]")
             elif isinstance(res, bool):
                 continue
+            elif res is None:
+                continue
             else:
                 val = res
 
