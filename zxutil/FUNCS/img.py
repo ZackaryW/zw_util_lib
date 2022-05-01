@@ -35,10 +35,10 @@ def combine_linear_image(dimension :str,*args):
         arg_img = arg[0]
         arg_name = arg[1]
         
-        if arg is None:
+        if arg_img is None:
             pend_name += "0."
             continue
         img.paste(arg_img, (i * x, 0))
-        pend_name += arg_name + "."
+        pend_name += str(arg_name) + "."
     
     return img, pend_name[:-1]
