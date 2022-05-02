@@ -36,7 +36,15 @@ class UTracker(type):
         cls._instances[cls][primary_key_value] = instance
         return instance
 
-    def yield_instance(cls, **kwargs):
+    def __contains__(cls, item):
+        if item.__class__ not in cls._instances:
+            return False
+        if not hasattr(item, 'primary_key'):
+            return False
+
+        return str(item.primary_key) in cls._instances[item.__class__]
+
+    def yield_instance(cls, reverse : bool = False,**kwargs):
         if cls not in cls._instances:
             return
 
@@ -51,15 +59,15 @@ class UTracker(type):
 
         for key, val in instances.items():
             datadict = dataclasses.asdict(val)
-            if condlex.match(**datadict):
+            if condlex.match(**datadict) != reverse:
                 yield key, val
 
-    def yield_field(cls, fieldname : str, yield_all : bool = False, **kwargs):
+    def yield_field(cls, fieldname : str, yield_all : bool = False, reverse : bool = False, **kwargs):
         stats : UTrackerStats = cls.get_stats()
         if fieldname not in stats.all_fields:
             return
 
-        for key, val in cls.yield_instance(**kwargs):
+        for key, val in cls.yield_instance(reverse, **kwargs):
             attr = getattr(val, fieldname, None)
             if attr is None:
                 continue
@@ -69,8 +77,8 @@ class UTracker(type):
                 yield attr
         
 
-    def yield_keys(cls, **kwargs):
-        for key, val in cls.yield_instance(**kwargs):
+    def yield_keys(cls, reverse : bool = False, **kwargs):
+        for key, val in cls.yield_instance(reverse, **kwargs):
             yield key
 
     def get_stats(cls) -> UTrackerStats:
@@ -82,7 +90,7 @@ class UTracker(type):
 
         return cls._analyzed[cls]
 
-    def remove(cls, **kwargs):
+    def remove(cls, reverse : bool = False,**kwargs):
         if cls not in cls._instances:
             return
         instances  = cls._instances[cls].keys()
@@ -91,7 +99,7 @@ class UTracker(type):
         for key in frozekeys:
             condlex = CondLex(**kwargs)
             datadict = dataclasses.asdict(cls._instances[cls][key])
-            if condlex.match(**datadict):
+            if condlex.match(**datadict) != reverse:
                 del cls._instances[cls][key]
     
     def remove_this(cls, item):
@@ -106,7 +114,7 @@ class UTracker(type):
         cls._instances[cls].pop(str(item.primary_key), None)
         del item
     
-    def check_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, **kwargs):
+    def check_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, reverse : bool = False,**kwargs):
         stats = cls.get_stats()
         if not stats.is_unique_key(key):
             return None
@@ -114,7 +122,7 @@ class UTracker(type):
         if value is None and ignore_none:
             return True
 
-        for attr, kkey, kval in cls.yield_field(key,yield_all=True, **kwargs):
+        for attr, kkey, kval in cls.yield_field(key,yield_all=True,reverse=reverse, **kwargs):
             if attr is None and ignore_none:
                 continue
             if ignore_this == kkey:
@@ -124,7 +132,7 @@ class UTracker(type):
 
         return True
 
-    def check_iterable_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, **kwargs):
+    def check_iterable_unique(cls, key : str, value, ignore_this = None, ignore_none : bool = True, reverse : bool = False, **kwargs):
         stats = cls.get_stats()
 
         if not stats.is_iterable_unique_key(key):
@@ -134,7 +142,7 @@ class UTracker(type):
             return True
 
         unique = set()
-        for attr, kkey, kval in cls.yield_field(key,yield_all=True, **kwargs):
+        for attr, kkey, kval in cls.yield_field(key,yield_all=True,reverse=reverse, **kwargs):
             if attr is None and ignore_none:
                 continue
             if ignore_this == kkey:

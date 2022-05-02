@@ -110,8 +110,8 @@ class UItem(metaclass=UTracker):
 
     # ANCHOR CLASSMETHOD
     @classmethod
-    def get(cls, **kwargs):
-        for key, val in cls.yield_instance(**kwargs):
+    def get(cls, reverse : bool = False, **kwargs):
+        for key, val in cls.yield_instance(reverse, **kwargs):
             return val
     
     @classmethod
@@ -139,14 +139,23 @@ class UItem(metaclass=UTracker):
             json.dump(data, f, indent=4)
 
     @classmethod
-    def get_all(cls, **kwargs):
+    def get_all(cls,reverse : bool = False, **kwargs):
         ret = []
-        for key, val in cls.yield_instance(**kwargs):
+        for key, val in cls.yield_instance(reverse, **kwargs):
             ret.append(val)
         return ret
 
     @classmethod
-    def export(cls, path : str=None,update_: bool = False, **kwargs):
+    def get_fields(cls, field : str, reverse :bool = False, **kwargs):
+        ret = []
+        for key, val in cls.yield_instance(reverse, **kwargs):
+            x = getattr(val, field, None)
+            if x is not None:
+                ret.append(x)
+        return ret
+
+    @classmethod
+    def export(cls, path : str=None,update_: bool = False, reverse : bool = False, **kwargs):
         if len(kwargs) == 0:
             return cls.export_all(path)
 
@@ -158,7 +167,7 @@ class UItem(metaclass=UTracker):
         if data2 is not None and isinstance(data2, dict):
             data = data2
 
-        for key, val in cls.yield_instance(**kwargs):
+        for key, val in cls.yield_instance(reverse, **kwargs):
             val : UItem
             data.update(val.tojson())
             
