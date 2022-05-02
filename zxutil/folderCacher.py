@@ -241,6 +241,52 @@ class FolderCacher:
         if os.path.exists(self.PATH):
             os.rmdir(self.PATH)
     
+    def prune(self, holding : bool = False, keep_holding_count : int = 1):
+        """
+        remove 
+        """
+        # remove files not in counting index
+        for file in os.listdir(self.PATH):
+            if not file.endswith(self.GLOBAL_EXTENSION):
+                continue
+            if file not in self._counting_index:
+                os.remove(os.path.join(self.PATH, file))
+
+        # remove files not in holding queue
+        counting_removal_list = []
+        for key, val in self._counting_index.items():
+            if key not in self._holding_queue:
+                os.remove(os.path.join(self.PATH, f"{key}"))
+                counting_removal_list.append(key)
+            
+        for key in counting_removal_list:
+            self._counting_index.pop(key)
+
+        # remove holding queue
+        if not holding:
+            return
+
+        holding_removal_list = []
+        for key, val in self._holding_queue.items():
+            if self._counting_index[key] < keep_holding_count:
+                os.remove(os.path.join(self.PATH, f"{key}"))
+                holding_removal_list.append(key)
+
+        for key in holding_removal_list:
+            self._holding_queue.pop(key)
+
+    @property
+    def count(self):
+        return len(self._counting_index)
+
+    @property
+    def count_holding(self):
+        return len(self._holding_queue)
+
+    @property
+    def count_constant(self):
+        return len(self._constant_cache)
+
     @staticmethod
     def make_pilimage_cache(path : str, create_if_null : bool = True, extension : str =None) -> 'FolderCacher':
         cache = FolderCacher(path, create_if_null, extension)
