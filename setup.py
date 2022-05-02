@@ -22,4 +22,8 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    requires=[
+        "requests",
+        "pillow"
+    ]
 )
