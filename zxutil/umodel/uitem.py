@@ -139,6 +139,13 @@ class UItem(metaclass=UTracker):
             json.dump(data, f, indent=4)
 
     @classmethod
+    def get_all(cls, **kwargs):
+        ret = []
+        for key, val in cls.yield_instance(**kwargs):
+            ret.append(val)
+        return ret
+
+    @classmethod
     def export(cls, path : str=None,update_: bool = False, **kwargs):
         if len(kwargs) == 0:
             return cls.export_all(path)
