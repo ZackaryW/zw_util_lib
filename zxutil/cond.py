@@ -179,6 +179,16 @@ class CondField:
         return self._match(value)[0]
         
 
+    def match_all(self, *args, allf : bool = False):
+        if allf:
+            return all(self.match(arg) for arg in args)
+        
+        ret = {}
+        for arg in args:
+            ret[str(arg)] = self.match(arg)
+        
+        return ret
+
     @classmethod
     def cmatch(cls, value,args : typing.Union[list, dict, typing.Any]) -> bool:
         if not args or len(args) == 0:
