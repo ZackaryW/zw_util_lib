@@ -88,6 +88,14 @@ class UItem(metaclass=UTracker):
         with open(path, "w") as f:
             json.dump(data, f)
 
+    def update(self, **kwargs):
+        kwargs = {k: v for k,v in kwargs.items() if k in self._tracker.get_stats().all_fields}
+
+        for k,v in kwargs.items():
+            setattr(self, k, v)
+
+        return self
+
     # ANCHOR export methods
     def todict(self):
         return dataclasses.asdict(self)
