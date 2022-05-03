@@ -249,14 +249,18 @@ class FolderCacher:
         for file in os.listdir(self.PATH):
             if not file.endswith(self.GLOBAL_EXTENSION):
                 continue
-            if file not in self._counting_index:
+            if "." not in file:
+                continue
+
+            file_base = file.split(".")[0]
+            if file_base not in self._counting_index:
                 os.remove(os.path.join(self.PATH, file))
 
         # remove files not in holding queue
         counting_removal_list = []
         for key, val in self._counting_index.items():
             if key not in self._holding_queue:
-                os.remove(os.path.join(self.PATH, f"{key}"))
+                os.remove(os.path.join(self.PATH, f"{key}.{self.GLOBAL_EXTENSION}"))
                 counting_removal_list.append(key)
             
         for key in counting_removal_list:
@@ -269,7 +273,7 @@ class FolderCacher:
         holding_removal_list = []
         for key, val in self._holding_queue.items():
             if self._counting_index[key] < keep_holding_count:
-                os.remove(os.path.join(self.PATH, f"{key}"))
+                os.remove(os.path.join(self.PATH, f"{key}.{self.GLOBAL_EXTENSION}"))
                 holding_removal_list.append(key)
 
         for key in holding_removal_list:
