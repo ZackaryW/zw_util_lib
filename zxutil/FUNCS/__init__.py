@@ -3,6 +3,7 @@ import typing
 import os
 import datetime
 import inspect
+from warnings import warn
 
 def parse_json(data : typing.Union[dict, list, str]) -> dict:
     """
@@ -47,17 +48,11 @@ def is_jsonable(x) -> bool:
     except:
         return False
 
+# ! deprecated
 def get_calling_method_name() -> str:
-    """ 
-    returns the name of the calling method
-
-    Returns:
-        str: name of the calling method
-    """
-    curframe = inspect.currentframe()
-    calframe = inspect.getouterframes(curframe, 2)
-    calling_method_name = calframe[1][3]
-    return calling_method_name
+    warn("get_calling_method_name is deprecated in 4.x, use inspecthack.get_caller_name() instead", DeprecationWarning)
+    from zxutil.FUNCS import inspecthack
+    return inspecthack.get_caller_name()
 
 def parse_dimension_string(dimension_string : str) -> list:
     """
