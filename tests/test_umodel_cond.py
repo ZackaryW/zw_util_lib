@@ -1,7 +1,7 @@
 from pprint import pprint
 import unittest
 import typing
-from zxutil.cond import CondField, CondLex
+from zxutil.umodel.cond import CondField, CondLex
 
 class poc(unittest.TestCase):
     def test_typing(self):

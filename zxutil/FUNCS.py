@@ -48,28 +48,3 @@ def is_jsonable(x) -> bool:
     except:
         return False
 
-# ! deprecated
-def get_calling_method_name() -> str:
-    warn("get_calling_method_name is deprecated in 4.x, use inspecthack.get_caller_name() instead", DeprecationWarning)
-    from zxutil.FUNCS import inspecthack
-    return inspecthack.get_caller_name()
-
-def parse_dimension_string(dimension_string : str) -> list:
-    """
-    parses a dimension string [int]xint to x,y
-    """
-    dimension_string = dimension_string.lower()
-
-    if "x" not in dimension_string:
-        return None
-
-    splits = dimension_string.split("x")
-    if len(splits) != 2:
-        return None
-    
-    try:
-        x = int(splits[0])
-        y = int(splits[1])
-        return x, y
-    except ValueError:
-        return None

@@ -1,0 +1,4 @@
+VERSION = 1
+
+DEPRECATED = True
+

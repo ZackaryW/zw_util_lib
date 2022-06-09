@@ -1,6 +1,6 @@
 import os
 from pprint import pprint
-from zxutil.folderCacher import FolderCacher
+from zxutil.folder_cacher import FolderCacher
 import unittest
 from PIL.Image import Image
 

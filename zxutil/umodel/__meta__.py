@@ -1,0 +1,4 @@
+VERSION = 2
+
+CODE_QUALITY = "B"
+

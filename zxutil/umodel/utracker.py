@@ -3,7 +3,7 @@ from types import MappingProxyType
 from typing import FrozenSet
 from zxutil.umodel.attrs import U_ValidationError
 from zxutil.umodel.ustats import UTrackerStats
-from zxutil.cond import CondField, CondLex
+from zxutil.umodel.cond import CondField, CondLex
 import inspect 
 import logging
 

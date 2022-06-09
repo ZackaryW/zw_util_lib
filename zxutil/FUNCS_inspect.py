@@ -1,7 +1,7 @@
 import inspect
 import typing
 
-def get_caller_name() -> str:
+def get_called_name() -> str:
     """ 
     returns the name of the calling method
 
@@ -13,10 +13,42 @@ def get_caller_name() -> str:
     calling_method_name = calframe[1][3]
     return calling_method_name
 
+def get_simple_caller_name() -> str:
+    """
+    returns the name of the calling method
+    """
+    stack = inspect.stack()
+    return stack[2].function
+
+def get_caller_name() -> str:
+    stack = inspect.stack()
+    func_name = stack[2].function
+    calling_class = stack[2][0].f_locals.get("self", None)
+    if calling_class is None:
+        calling_class = stack[2][0].f_locals.get("cls", None)
+    if calling_class is not None:
+        calling_name = f"{repr(calling_class.__class__)[8:-2]}.{func_name}"
+        return calling_name
+
+    return func_name
+
 def get_caller_class():
     stack = inspect.stack()
-    calling_class = stack[2][0].f_locals['self']
+    calling_class = stack[2][0].f_locals.get("self", None)
+    if calling_class is None:
+        calling_class = stack[2][0].f_locals.get("cls", None)
     return calling_class
+
+def get_caller_func():
+    stack = inspect.stack()
+    calling_func_name = stack[2].function
+    calling_class = stack[2][0].f_locals.get("self", None)
+    if calling_class is None:
+        calling_class = stack[2][0].f_locals.get("cls", None)
+    calling_func = getattr(calling_class, calling_func_name)
+    return calling_func
+
+
 
 def caller_hasattr(attr: str, deep:bool = False) -> bool:
     """
