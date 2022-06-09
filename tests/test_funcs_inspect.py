@@ -18,9 +18,9 @@ def test_2():
     a =101
     return t1.test_1()
 
-class t_inspect(unittest.TestCase):
-    def test_caller_class_1(self):
+class test(unittest.TestCase):
+    def test_1(self):
         self.assertEqual(t2().test_1(), 10)
 
-    def test_caller_class_2(self):
+    def test_2(self):
         self.assertEqual(test_2(), 101)

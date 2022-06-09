@@ -7,10 +7,17 @@ from zxutil.umodel.attrs import UError, UKey, UPrimaryKey, UniqueKey
 
 UID_MUST_BE_AT_LEAST_7 = lambda x : len(str(x)) == 7
 VALID_EMAIL = lambda x : "@" in x and not x.startswith("@") and not x.endswith("@")
-
-class modelling(unittest.TestCase):
-    def test_1(self):
         
+@dataclass
+class testx(UItem):
+    uid : typing.Union[int, UPrimaryKey, UID_MUST_BE_AT_LEAST_7]
+    name : typing.Union[str, UniqueKey]
+    age : typing.Union[int, UKey]
+    something_random : typing.Union[str, UniqueKey] = None
+    somemore_random : typing.Union[str, UniqueKey] = None
+
+class test_modelling(unittest.TestCase):
+    def testpoc_1(self):
         @dataclass
         class test(UItem):
             uid : typing.Union[int, UPrimaryKey, UID_MUST_BE_AT_LEAST_7]
@@ -22,15 +29,6 @@ class modelling(unittest.TestCase):
 
         pprint(test.get_stats())
 
-@dataclass
-class testx(UItem):
-    uid : typing.Union[int, UPrimaryKey, UID_MUST_BE_AT_LEAST_7]
-    name : typing.Union[str, UniqueKey]
-    age : typing.Union[int, UKey]
-    something_random : typing.Union[str, UniqueKey] = None
-    somemore_random : typing.Union[str, UniqueKey] = None
-
-class test(unittest.TestCase):
     def test_1(self):
         x = testx(
             uid=1234555,
