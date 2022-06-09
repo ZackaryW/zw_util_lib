@@ -1,5 +1,5 @@
 import unittest
-import zxutil.__FUNCS__.inspecthack as inspecthack
+import zxutil.FUNCS_inspect as inspecthack
 
 class t1:
     @classmethod
@@ -18,7 +18,7 @@ def test_2():
     a =101
     return t1.test_1()
 
-class t_funcs(unittest.TestCase):
+class t_inspect(unittest.TestCase):
     def test_caller_class_1(self):
         self.assertEqual(t2().test_1(), 10)
 
