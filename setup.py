@@ -2,7 +2,7 @@ from setuptools import setup,find_packages
 
 setup(
     name="zw-util-lib",
-    version="3.0.25",
+    version="4.0.0",
     author="ZW",
     description="a library for misc utilities",
     long_description=''.join(open('README.md').readlines()),
@@ -12,7 +12,8 @@ setup(
         "zxutil",
         "zxutil.umodel",
         "zxutil.FUNCS",
-        "zxdeprecated"
+        "zxutil.folder_cacher",
+        "zxutil.uitem"
     ],
     # get from requirements.txt
     install_requires= open('requirements.txt').readlines(),
@@ -24,6 +25,5 @@ setup(
     python_requires='>=3.6',
     requires=[
         "requests",
-        "pillow"
     ]
 )
