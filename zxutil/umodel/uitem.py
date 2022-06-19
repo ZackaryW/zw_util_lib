@@ -7,7 +7,7 @@ import logging
 import os
 from pprint import pprint
 import typing
-from zxutil.FUNCS import parse_json
+from zxutil.FUNCS.json import parse_json
 from zxutil.umodel.attrs import U_InvalidBehavior, U_ValidationError
 from zxutil.umodel.utracker import UTracker
 

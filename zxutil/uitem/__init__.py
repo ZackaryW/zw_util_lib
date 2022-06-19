@@ -3,7 +3,7 @@ import dataclasses
 import logging
 from pprint import pprint
 import typing
-from zxutil.FUNCS import parse_json
+from zxutil.FUNCS.json import parse_json
 import json 
 import inspect 
 

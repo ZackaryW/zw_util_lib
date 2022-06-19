@@ -1,7 +1,6 @@
 import json
 import typing
 import os
-import datetime
 import inspect
 from warnings import warn
 
@@ -28,15 +27,6 @@ def parse_json(data : typing.Union[dict, list, str]) -> dict:
             return json.loads(data)
         except json.JSONDecodeError:
             return None
-        
-def create_timestamp() -> int:
-    """
-    creates a unix timestamp
-    """
-    now = datetime.datetime.now()
-    # convert now to unix timestamp milliseconds
-    unix_timestamp = int(now.timestamp() * 1000)
-    return unix_timestamp
 
 def is_jsonable(x) -> bool:
     """
