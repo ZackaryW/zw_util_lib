@@ -1,4 +1,9 @@
+from importlib.metadata import entry_points
+from pprint import pprint
 from setuptools import setup,find_packages
+
+if __name__ == "__main__":
+    pprint(find_packages(exclude=['tests', 'tests.*']))
 
 setup(
     name="zw-util-lib",
@@ -8,13 +13,9 @@ setup(
     long_description=''.join(open('README.md').readlines()),
     long_description_content_type="text/markdown",
     url="https://github.com/ZackaryW/zw_util_lib",
-    packages=[
-        "zxutil",
-        "zxutil.umodel",
-        "zxutil.FUNCS",
-        "zxutil.folder_cacher",
-        "zxutil.uitem"
-    ],
+    packages=find_packages(exclude=['tests', 'tests.*']),
+    package_data={'': ['LICENSE']},
+    include_package_data=True,
     # get from requirements.txt
     install_requires= open('requirements.txt').readlines(),
     classifiers=[
@@ -23,7 +24,6 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    requires=[
-        "requests",
-    ]
+
 )
+
