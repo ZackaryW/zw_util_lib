@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/ZackaryW/zw_util_lib",
     packages=find_packages(exclude=['tests', 'tests.*']),
-    package_data={'': ['LICENSE', "*.db"]},
+    package_data={'': ['LICENSE']},
     include_package_data=True,
     # get from requirements.txt
     install_requires= open('requirements.txt').readlines(),
