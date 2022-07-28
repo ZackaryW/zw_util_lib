@@ -6,8 +6,8 @@ if __name__ == "__main__":
     pprint(find_packages(exclude=['tests', 'tests.*']))
 
 setup(
-    name="zw-util-lib",
-    version="4.0.0",
+    name="zx-util",
+    version="1.0.0",
     author="ZW",
     description="a library for misc utilities",
     long_description=''.join(open('README.md').readlines()),
