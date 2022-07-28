@@ -1,5 +1,5 @@
 import unittest
-import zxutil.FUNCS.inspect as inspecthack
+import zxutils.inspect as inspecthack
 
 class t1:
     @classmethod

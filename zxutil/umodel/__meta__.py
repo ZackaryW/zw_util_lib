@@ -1,3 +1,1 @@
 VERSION = 2
-
-CODE_QUALITY = 1
